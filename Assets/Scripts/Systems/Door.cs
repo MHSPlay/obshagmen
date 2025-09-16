@@ -1,11 +1,19 @@
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Door : MonoBehaviour, IInteractable
 {
     [ SerializeField ] private Item reqKey;
     [ SerializeField ] private string reqKeyID;
     [ SerializeField ] private bool isLocked = true;
+
+    private bool isOpen = false;
+
+    public UnityEvent onDoorOpened;
+    public UnityEvent onDoorClosed;
+    public UnityEvent onDoorUnlocked;
+    public UnityEvent onAccessDenied;
 
     void Start( )
     {
@@ -21,6 +29,7 @@ public class Door : MonoBehaviour, IInteractable
             if ( Inventory.Instance.has( reqKey.itemID ) )
             {
                 unlock( );
+                toggle( );
             }
             else
             {
@@ -29,29 +38,63 @@ public class Door : MonoBehaviour, IInteractable
         }
         else
         {
-            // open
+            toggle( );
         }
     }
 
     public string get_text( )
     {
+        // @todo: fix text
         if ( isLocked )
-            return $"[E] Открыть (Требуется: { ( reqKey ? reqKey.itemName : "Ключ" ) })";
+            return $"[E] Открыть (Требуется: {(reqKey ? reqKey.itemName : "Ключ")})";
         else
-            return "[E] Взаимодействие";
+            return isOpen ? "[E] Закрыть дверь" : "[E] Открыть дверь";
 
     }
 
     void unlock( )
     {
         isLocked = false;
-        
-        // play sound ?
+
+        //PlaySound();
 
         Inventory.Instance.remove( reqKey );
-       
+        onDoorUnlocked?.Invoke( );
+    }
+
+    void toggle( )
+    {
+        if ( isOpen )
+            close( );
+        else
+            open( );
+    }
+
+    public void open( )
+    {
+        if ( isOpen )
+            return;
+
+        isOpen = true;
+
+        //PlaySound();
+
+        onDoorOpened?.Invoke( );
+    }
+
+    public void close()
+    {
+        if ( !isOpen )
+            return;
+
+        isOpen = false;
+
+        //PlaySound();
+
+        onDoorClosed?.Invoke( );
     }
 
     public bool IsLocked( ) => isLocked;
+    public bool IsOpen( ) => isOpen;
 
 }

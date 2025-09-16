@@ -11,7 +11,7 @@ public class Key : MonoBehaviour, IInteractable
 
     public string get_text( )
     {
-        return $"";
+        return $"[E] Подобрать {(itemData ? itemData.itemName : "Ключ")}";
     }
 
     void pickup( )

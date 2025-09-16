@@ -484,6 +484,18 @@ MonoBehaviour:
   reqKey: {fileID: 11400000, guid: 50942d60d2a63b044984cb361ffbbe07, type: 2}
   reqKeyID: 
   isLocked: 1
+  onDoorOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorUnlocked:
+    m_PersistentCalls:
+      m_Calls: []
+  onAccessDenied:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,6 +1328,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2287269705475015126, guid: 07f60c5382159614992b54c9489d3743, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2882025861018932456, guid: 07f60c5382159614992b54c9489d3743, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2882025861018932456, guid: 07f60c5382159614992b54c9489d3743, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2882025861018932456, guid: 07f60c5382159614992b54c9489d3743, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2882025861018932456, guid: 07f60c5382159614992b54c9489d3743, type: 3}
+      propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8552508050772349838, guid: 07f60c5382159614992b54c9489d3743, type: 3}
