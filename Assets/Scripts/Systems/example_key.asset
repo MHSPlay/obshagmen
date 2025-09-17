@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f248ed0ba993714f88c6520cf999af6, type: 3}
   m_Name: example_key
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  itemName: Key
+  itemName: "\u041A\u043B\u044E\u0447 \u043E\u0442 \u0434\u0432\u0435\u0440\u0438"
   itemID: 1
   description: Key for open door. u know?
+  defaultSprite: {fileID: 21300000, guid: f808bf455d8040245b407fb8b1eaf5d4, type: 3}
   itemType: 1

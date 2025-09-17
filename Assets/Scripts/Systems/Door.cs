@@ -9,14 +9,20 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private Item reqKey;
     [SerializeField] private string reqKeyID;
     [SerializeField] private bool isLocked = true;
-    private Animation anim;
 
+    [SerializeField] private Sprite doorOpenIcon;
+    [SerializeField] private Sprite doorClosedIcon;
+    [SerializeField] private Sprite doorLockedIcon;
+
+    private Animation anim;
     private bool isOpen = false;
 
     public UnityEvent onDoorOpened;
     public UnityEvent onDoorClosed;
     public UnityEvent onDoorUnlocked;
     public UnityEvent onAccessDenied;
+
+    public UnityEvent onDoorStateChanged;
 
     void Start()
     {
@@ -48,12 +54,19 @@ public class Door : MonoBehaviour, IInteractable
 
     public string get_text()
     {
-        // @todo: fix text
         if (isLocked)
-            return $"[E] ������� (���������: {(reqKey ? reqKey.itemName : "����")})";
+            return $"[E] Открыть дверь (Требуется: {(reqKey ? reqKey.itemName : "Ключ")})";
         else
-            return isOpen ? "[E] ������� �����" : "[E] ������� �����";
+            return isOpen ? "[E] Закрыть дверь" : "[E] Открыть дверь";
 
+    }
+
+    public Sprite get_icon()
+    {
+        if ( isLocked )
+            return doorLockedIcon;
+        else
+            return isOpen ? doorOpenIcon : doorClosedIcon;
     }
 
     void unlock()
@@ -64,6 +77,7 @@ public class Door : MonoBehaviour, IInteractable
 
         Inventory.Instance.remove(reqKey);
         onDoorUnlocked?.Invoke();
+        onDoorStateChanged?.Invoke();
     }
 
     void toggle()
@@ -87,6 +101,7 @@ public class Door : MonoBehaviour, IInteractable
         //PlaySound();
 
         onDoorOpened?.Invoke();
+        onDoorStateChanged?.Invoke();
 
         anim.Play("DoorOpen");
     }
@@ -104,6 +119,7 @@ public class Door : MonoBehaviour, IInteractable
         //PlaySound();
 
         onDoorClosed?.Invoke();
+        onDoorStateChanged?.Invoke();
 
         anim.Play("DoorClose");
     }

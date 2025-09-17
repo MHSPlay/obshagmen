@@ -14,6 +14,11 @@ public class Key : MonoBehaviour, IInteractable
         return $"[E] Подобрать {(itemData ? itemData.itemName : "Ключ")}";
     }
 
+    public Sprite get_icon( )
+    {
+        return itemData.defaultSprite;
+    }
+
     void pickup( )
     {
         if ( Inventory.Instance.add( itemData ) )

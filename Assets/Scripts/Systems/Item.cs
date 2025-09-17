@@ -6,6 +6,7 @@ public class Item : ScriptableObject
     public string itemName;
     public string itemID;
     public string description;
+    public Sprite defaultSprite;
     public ItemType itemType;
 
     public enum ItemType

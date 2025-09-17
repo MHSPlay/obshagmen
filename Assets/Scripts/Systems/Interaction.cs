@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
 {
@@ -10,7 +10,10 @@ public class Interaction : MonoBehaviour
     [ SerializeField ] private Image interactionIcon;
     [ SerializeField ] private TMPro.TextMeshProUGUI interactionText;
 
+    [ SerializeField ] private Sprite transparentIcon;
+
     private IInteractable current;
+    private Door currentDoor;
 
     void Start( )
     {
@@ -44,8 +47,23 @@ public class Interaction : MonoBehaviour
             {
                 if ( current != interactable )
                 {
+
+                    if ( currentDoor != null )
+                    {
+                        currentDoor.onDoorStateChanged.RemoveListener( UpdateUI );
+                        currentDoor = null;
+                    }
+
                     current = interactable;
-                    showUI( interactable.get_text( ) );
+
+                    Door door = hit.collider.GetComponent< Door >( );
+                    if ( door != null )
+                    {
+                        currentDoor = door;
+                        currentDoor.onDoorStateChanged.AddListener( UpdateUI );
+                    }
+
+                    showUI( interactable.get_text( ), interactable.get_icon( ) );
                 }
             }
             else
@@ -57,12 +75,17 @@ public class Interaction : MonoBehaviour
         
     }
 
-    void showUI( string text )
+    void showUI( string text, Sprite icon )
     {
         if ( current != null )
         {
             interactionText.gameObject.SetActive( true );
             interactionText.text = text;
+
+            if ( interactionIcon != null )
+                interactionIcon.sprite = icon != null ? icon : transparentIcon;
+            
+
         }
         
     }
@@ -76,7 +99,16 @@ public class Interaction : MonoBehaviour
             if ( interactionText != null )
                 interactionText.gameObject.SetActive( false );
 
+            if ( interactionIcon != null )
+                interactionIcon.sprite = transparentIcon;
+
         }
+    }
+
+    void UpdateUI( )
+    {
+        if ( current != null )
+            showUI( current.get_text( ), current.get_icon( ) );
     }
 
 }

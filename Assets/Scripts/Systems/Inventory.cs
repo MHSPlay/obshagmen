@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -20,6 +21,9 @@ public class Inventory : MonoBehaviour
     public UnityEvent< Item > onItemRemoved;
     public UnityEvent onInventoryChanged;
 
+    [ SerializeField ] private TMPro.TextMeshProUGUI notificationText;
+    private Coroutine resetCoroutine;
+
     void Awake()
     {
         if ( instance == null )
@@ -36,8 +40,19 @@ public class Inventory : MonoBehaviour
     {
         items.Add( item );
         onItemAdded?.Invoke( item );
-        onInventoryChanged?.Invoke( );
-        Debug.Log( $"Добавлен предмет: { item.itemName }" );
+        onInventoryChanged?.Invoke();
+
+        switch ( item.itemType )
+        {
+            case Item.ItemType.None: notificationText.text = $"Добавлен предмет: {item.itemName}."; break;
+            case Item.ItemType.Key: notificationText.text = $"Подобран ключ: {item.itemName}."; break;
+        }
+
+        if ( resetCoroutine != null )
+            StopCoroutine( resetCoroutine );
+
+        resetCoroutine = StartCoroutine( reset_notify( 5f ) );
+
         return true;
     }
 
@@ -63,4 +78,12 @@ public class Inventory : MonoBehaviour
         items.Clear( );
         onInventoryChanged?.Invoke( );
     }
+
+    private IEnumerator reset_notify( float delay )
+    {
+        yield return new WaitForSeconds( delay );
+        notificationText.text = "";
+        resetCoroutine = null;
+    }
+
 }
