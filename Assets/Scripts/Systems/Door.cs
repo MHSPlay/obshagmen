@@ -1,12 +1,14 @@
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
 {
-    [ SerializeField ] private Item reqKey;
-    [ SerializeField ] private string reqKeyID;
-    [ SerializeField ] private bool isLocked = true;
+    [SerializeField] private Item reqKey;
+    [SerializeField] private string reqKeyID;
+    [SerializeField] private bool isLocked = true;
 
     private bool isOpen = false;
 
@@ -15,21 +17,21 @@ public class Door : MonoBehaviour, IInteractable
     public UnityEvent onDoorUnlocked;
     public UnityEvent onAccessDenied;
 
-    void Start( )
+    void Start()
     {
-        if ( reqKey != null && reqKey.itemType == Item.ItemType.Key )
+        if (reqKey != null && reqKey.itemType == Item.ItemType.Key)
             reqKeyID = reqKey.itemID;
-        
+
     }
 
-    public void interact( )
+    public void interact()
     {
-        if ( isLocked )
+        if (isLocked)
         {
-            if ( Inventory.Instance.has( reqKey.itemID ) )
+            if (Inventory.Instance.has(reqKey.itemID))
             {
-                unlock( );
-                toggle( );
+                unlock();
+                toggle();
             }
             else
             {
@@ -38,63 +40,78 @@ public class Door : MonoBehaviour, IInteractable
         }
         else
         {
-            toggle( );
+            toggle();
         }
     }
 
-    public string get_text( )
+    public string get_text()
     {
         // @todo: fix text
-        if ( isLocked )
-            return $"[E] Открыть (Требуется: {(reqKey ? reqKey.itemName : "Ключ")})";
+        if (isLocked)
+            return $"[E] пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {(reqKey ? reqKey.itemName : "пїЅпїЅпїЅпїЅ")})";
         else
-            return isOpen ? "[E] Закрыть дверь" : "[E] Открыть дверь";
+            return isOpen ? "[E] пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ" : "[E] пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ";
 
     }
 
-    void unlock( )
+    void unlock()
     {
         isLocked = false;
 
         //PlaySound();
 
-        Inventory.Instance.remove( reqKey );
-        onDoorUnlocked?.Invoke( );
+        Inventory.Instance.remove(reqKey);
+        onDoorUnlocked?.Invoke();
     }
 
-    void toggle( )
+    void toggle()
     {
-        if ( isOpen )
-            close( );
+        if (isOpen)
+            close();
         else
-            open( );
+            open();
     }
 
-    public void open( )
+    public void open()
     {
-        if ( isOpen )
+        if (isOpen)
             return;
 
         isOpen = true;
 
         //PlaySound();
 
-        onDoorOpened?.Invoke( );
+        onDoorOpened?.Invoke();
+
+        StartCoroutine(Animation(0, 90));
     }
 
     public void close()
     {
-        if ( !isOpen )
+        if (!isOpen)
             return;
 
         isOpen = false;
 
         //PlaySound();
 
-        onDoorClosed?.Invoke( );
+        onDoorClosed?.Invoke();
+
+        StartCoroutine(Animation(90, 0));
     }
 
-    public bool IsLocked( ) => isLocked;
-    public bool IsOpen( ) => isOpen;
+    IEnumerator Animation(float start, float end)
+    {
+        while (transform.localRotation.y <= end || transform.localRotation.y >= end)
+        {
+            Debug.Log("1");
+            transform.localRotation = new Quaternion(0,Mathf.Lerp(start, end, Time.deltaTime),0, 0);
+            yield return null;
+        }
+        yield return null;
+    }
+
+    public bool IsLocked() => isLocked;
+    public bool IsOpen() => isOpen;
 
 }
