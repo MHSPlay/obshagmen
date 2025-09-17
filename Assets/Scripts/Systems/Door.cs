@@ -9,6 +9,7 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private Item reqKey;
     [SerializeField] private string reqKeyID;
     [SerializeField] private bool isLocked = true;
+    private Animation anim;
 
     private bool isOpen = false;
 
@@ -22,6 +23,7 @@ public class Door : MonoBehaviour, IInteractable
         if (reqKey != null && reqKey.itemType == Item.ItemType.Key)
             reqKeyID = reqKey.itemID;
 
+        anim = GetComponent<Animation>();
     }
 
     public void interact()
@@ -35,7 +37,7 @@ public class Door : MonoBehaviour, IInteractable
             }
             else
             {
-                // locked door feedback ?
+                onAccessDenied?.Invoke();
             }
         }
         else
@@ -74,6 +76,9 @@ public class Door : MonoBehaviour, IInteractable
 
     public void open()
     {
+        if(anim.isPlaying)
+            return;
+
         if (isOpen)
             return;
 
@@ -83,11 +88,14 @@ public class Door : MonoBehaviour, IInteractable
 
         onDoorOpened?.Invoke();
 
-        StartCoroutine(Animation(0, 90));
+        anim.Play("DoorOpen");
     }
 
     public void close()
     {
+        if (anim.isPlaying)
+            return;
+
         if (!isOpen)
             return;
 
@@ -97,18 +105,7 @@ public class Door : MonoBehaviour, IInteractable
 
         onDoorClosed?.Invoke();
 
-        StartCoroutine(Animation(90, 0));
-    }
-
-    IEnumerator Animation(float start, float end)
-    {
-        while (transform.localRotation.y <= end || transform.localRotation.y >= end)
-        {
-            Debug.Log("1");
-            transform.localRotation = new Quaternion(0,Mathf.Lerp(start, end, Time.deltaTime),0, 0);
-            yield return null;
-        }
-        yield return null;
+        anim.Play("DoorClose");
     }
 
     public bool IsLocked() => isLocked;
