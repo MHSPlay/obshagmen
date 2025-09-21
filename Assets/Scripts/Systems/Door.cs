@@ -1,7 +1,8 @@
+using System.Collections;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class Door : MonoBehaviour, IInteractable
@@ -14,8 +15,12 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private Sprite doorClosedIcon;
     [SerializeField] private Sprite doorLockedIcon;
 
+    [SerializeField] private bool isSwapSceneDoor = false;
+    [SerializeField] private string targetSceneName;
+
     private Animation anim;
     private bool isOpen = false;
+    private SceneManagers sceneManager;
 
     public UnityEvent onDoorOpened;
     public UnityEvent onDoorClosed;
@@ -30,6 +35,11 @@ public class Door : MonoBehaviour, IInteractable
             reqKeyID = reqKey.itemID;
 
         anim = GetComponent<Animation>();
+
+        sceneManager = GetComponent<SceneManagers>();
+        if (isSwapSceneDoor && sceneManager == null)
+            sceneManager = gameObject.AddComponent<SceneManagers>();
+        
     }
 
     public void interact()
@@ -55,7 +65,7 @@ public class Door : MonoBehaviour, IInteractable
     public string get_text()
     {
         if (isLocked)
-            return $"[E] Открыть дверь (Требуется: {(reqKey ? reqKey.itemName : "Ключ")})";
+            return $"[E] Дверь закрыта";
         else
             return isOpen ? "[E] Закрыть дверь" : "[E] Открыть дверь";
 
@@ -104,6 +114,12 @@ public class Door : MonoBehaviour, IInteractable
         onDoorStateChanged?.Invoke();
 
         anim.Play("DoorOpen");
+
+        if (isSwapSceneDoor && sceneManager != null && !string.IsNullOrEmpty(targetSceneName))
+        {
+            StartCoroutine(DelayedSceneTransition());
+        }
+
     }
 
     public void close()
@@ -122,6 +138,12 @@ public class Door : MonoBehaviour, IInteractable
         onDoorStateChanged?.Invoke();
 
         anim.Play("DoorClose");
+    }
+
+    private IEnumerator DelayedSceneTransition()
+    {
+        yield return new WaitForSeconds( 0.0007f );
+        sceneManager.load(targetSceneName);
     }
 
     public bool IsLocked() => isLocked;

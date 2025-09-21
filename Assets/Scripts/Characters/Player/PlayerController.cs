@@ -5,7 +5,6 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float _walkingSpeed = 5f;
-    [SerializeField] private float _runningSpeed = 8f;
 
     [SerializeField] private float maxVelocityChange = 10f;
 
@@ -21,11 +20,6 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
-    }
-
-    private void Update( )
-    {
-        //GroundCheck( );
     }
 
     private void FixedUpdate( )

@@ -29,7 +29,7 @@ public class Inventory : MonoBehaviour
         if ( instance == null )
         {
             instance = this;
-            DontDestroyOnLoad( gameObject );
+            //DontDestroyOnLoad( gameObject );
         }
         else if ( instance != this )
             Destroy( gameObject );
@@ -44,8 +44,8 @@ public class Inventory : MonoBehaviour
 
         switch ( item.itemType )
         {
-            case Item.ItemType.None: notificationText.text = $"Добавлен предмет: {item.itemName}."; break;
-            case Item.ItemType.Key: notificationText.text = $"Подобран ключ: {item.itemName}."; break;
+            case Item.ItemType.None: notificationText.text = $"Добавлено: {item.itemName}."; break;
+            case Item.ItemType.Key: notificationText.text = $"Подобрано: {item.itemName} - {item.description}."; break;
         }
 
         if ( resetCoroutine != null )
@@ -84,6 +84,17 @@ public class Inventory : MonoBehaviour
         yield return new WaitForSeconds( delay );
         notificationText.text = "";
         resetCoroutine = null;
+    }
+
+    public void save()
+    {
+        List<string> itemIDs = new List<string>();
+        foreach (Item item in items)
+            itemIDs.Add(item.itemID);
+        
+        string inventoryData = string.Join(",", itemIDs);
+        PlayerPrefs.SetString("InventoryData", inventoryData);
+        PlayerPrefs.Save();
     }
 
 }
