@@ -1,16 +1,31 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private GameObject mainMenu;
+    [SerializeField] private GameObject settingsMenu;
+
+    [SerializeField] private string firstLevel;
+
+    public void StartGame()
     {
-        
+        SceneManager.LoadScene(firstLevel);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ExitGame()
     {
-        
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+        Debug.Log("Game is exiting");
+    }
+
+    public void ShowSettings(bool state)
+    {
+        mainMenu.SetActive(!state);
+        settingsMenu.SetActive(state);
     }
 }
