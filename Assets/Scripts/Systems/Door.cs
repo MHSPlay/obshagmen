@@ -100,10 +100,7 @@ public class Door : MonoBehaviour, IInteractable
 
     public void open()
     {
-        if(anim.isPlaying)
-            return;
-
-        if (isOpen)
+        if(anim.isPlaying || isOpen)
             return;
 
         isOpen = true;
